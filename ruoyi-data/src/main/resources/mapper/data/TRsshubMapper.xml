@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.data.mapper.TRsshubMapper">
+    
+    <resultMap type="TRsshub" id="TRsshubResult">
+        <result property="id"    column="id"    />
+        <result property="guid"    column="guid"    />
+        <result property="title"    column="title"    />
+        <result property="author"    column="author"    />
+        <result property="content"    column="content"    />
+        <result property="publishDate"    column="publish_date"    />
+        <result property="link"    column="link"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectTRsshubVo">
+        select id, guid, title, author, content, publish_date, link, type from t_rsshub
+    </sql>
+
+    <select id="selectTRsshubList" parameterType="TRsshub" resultMap="TRsshubResult">
+        <include refid="selectTRsshubVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="author != null  and author != ''"> and author like concat('%', #{author}, '%')</if>
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+            <if test="params.beginPublishDate != null and params.beginPublishDate != '' and params.endPublishDate != null and params.endPublishDate != ''"> and publish_date between #{params.beginPublishDate} and #{params.endPublishDate}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectTRsshubById" parameterType="Long" resultMap="TRsshubResult">
+        <include refid="selectTRsshubVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTRsshub" parameterType="TRsshub" useGeneratedKeys="true" keyProperty="id">
+        insert into t_rsshub
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="guid != null">guid,</if>
+            <if test="title != null">title,</if>
+            <if test="author != null">author,</if>
+            <if test="content != null">content,</if>
+            <if test="publishDate != null">publish_date,</if>
+            <if test="link != null">link,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="guid != null">#{guid},</if>
+            <if test="title != null">#{title},</if>
+            <if test="author != null">#{author},</if>
+            <if test="content != null">#{content},</if>
+            <if test="publishDate != null">#{publishDate},</if>
+            <if test="link != null">#{link},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTRsshub" parameterType="TRsshub">
+        update t_rsshub
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="guid != null">guid = #{guid},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="author != null">author = #{author},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="publishDate != null">publish_date = #{publishDate},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTRsshubById" parameterType="Long">
+        delete from t_rsshub where id = #{id}
+    </delete>
+
+    <delete id="deleteTRsshubByIds" parameterType="String">
+        delete from t_rsshub where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
